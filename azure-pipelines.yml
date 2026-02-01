@@ -6,34 +6,26 @@ pool:
 
 steps:
 - checkout: self
-  clean: true
 
 - task: JavaToolInstaller@0
-  displayName: 'Install JDK 17'
   inputs:
     versionSpec: '17'
     jdkArchitectureOption: 'x64'
     jdkSourceOption: 'PreInstalled'
 
-# Debug – shows files clearly
+# Install supported Gradle (8.x, not 9.x)
 - script: |
-    echo "Repo root:"
-    ls -la
-    echo "android-app:"
-    ls -la android-app
-  displayName: 'Debug folder structure'
+    wget https://services.gradle.org/distributions/gradle-8.5-bin.zip
+    unzip gradle-8.5-bin.zip
+    export PATH=$PWD/gradle-8.5/bin:$PATH
+    gradle -v
+  displayName: 'Install Gradle 8.5'
 
-# Grant permission (NOW it will exist)
+# Build using project path
 - script: |
-    chmod +x android-app/gradlew
-  displayName: 'Grant execute permission to gradlew'
-
-# Build APK
-- script: |
-    android-app/gradlew clean assembleDebug
+    gradle -p android-app clean assembleDebug
   displayName: 'Build Debug APK'
 
-# Publish APK
 - task: PublishPipelineArtifact@1
   inputs:
     targetPath: android-app/app/build/outputs/apk/debug
