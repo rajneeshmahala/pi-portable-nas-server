@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -18,8 +19,8 @@ fun LoginScreen(onConnect: (String, String, String) -> Unit) {
         OutlinedTextField(host, { host = it }, label = { Text("Host / IP") })
         OutlinedTextField(user, { user = it }, label = { Text("Username") })
         OutlinedTextField(
-            pass,
-            { pass = it },
+            value = pass,
+            onValueChange = { pass = it },
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation()
         )
