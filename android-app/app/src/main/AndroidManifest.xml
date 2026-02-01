@@ -3,7 +3,9 @@
     <application
         android:label="DevX Terminal"
         android:theme="@style/Theme.DevX">
-        <activity android:name="com.devx.app.MainActivity" android:exported="true">
+        <activity
+            android:name="com.devx.app.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

@@ -26,7 +26,7 @@ fun HomeScreen() {
             onClick = { connected = true },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF22C55E))
         ) {
-            Text("Connect to nas.local", color = Color.Black)
+            Text("Connect to user@nas.local", color = Color.Black)
         }
 
         Spacer(modifier = Modifier.height(24.dp))
