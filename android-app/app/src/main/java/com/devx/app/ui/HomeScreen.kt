@@ -1,17 +1,23 @@
 package com.devx.app.ui
 
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
 fun HomeScreen() {
-    Column(Modifier.padding(20.dp)) {
-        Text("DevX", fontSize = 32.sp, color = Color.Cyan)
-        Text("Made by Rajneesh Mahala", color = Color.Gray)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+    ) {
+        Text(text = "DevX", fontSize = 32.sp)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "Made by Rajneesh Mahala", fontSize = 14.sp)
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(text = "Simple & CI-safe Android App", fontSize = 18.sp)
     }
 }
