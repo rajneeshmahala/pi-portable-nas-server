@@ -4,7 +4,6 @@ import net.schmizz.sshj.SSHClient
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier
 
 class SshClient {
-
     private var client: SSHClient? = null
 
     fun connect(host: String, user: String, password: String): String {
@@ -12,7 +11,7 @@ class SshClient {
         client!!.addHostKeyVerifier(PromiscuousVerifier())
         client!!.connect(host)
         client!!.authPassword(user, password)
-        return "Connected to $host"
+        return "Connected to $user@$host"
     }
 
     fun exec(cmd: String): String {
@@ -22,9 +21,5 @@ class SshClient {
         command.join()
         session.close()
         return output
-    }
-
-    fun close() {
-        client?.disconnect()
     }
 }
