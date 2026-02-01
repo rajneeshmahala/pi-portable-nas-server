@@ -6,26 +6,29 @@ pool:
 
 steps:
 - checkout: self
+  clean: true
 
+# Install Java 17
 - task: JavaToolInstaller@0
   inputs:
     versionSpec: '17'
     jdkArchitectureOption: 'x64'
     jdkSourceOption: 'PreInstalled'
 
-# Install supported Gradle (8.x, not 9.x)
+# Install Gradle 8.5 (Android supported)
 - script: |
     wget https://services.gradle.org/distributions/gradle-8.5-bin.zip
-    unzip gradle-8.5-bin.zip
-    export PATH=$PWD/gradle-8.5/bin:$PATH
+    unzip -q gradle-8.5-bin.zip
+    echo "##vso[task.setvariable variable=PATH]$PWD/gradle-8.5/bin:$PATH"
     gradle -v
   displayName: 'Install Gradle 8.5'
 
-# Build using project path
+# Build APK
 - script: |
     gradle -p android-app clean assembleDebug
   displayName: 'Build Debug APK'
 
+# Publish APK
 - task: PublishPipelineArtifact@1
   inputs:
     targetPath: android-app/app/build/outputs/apk/debug
