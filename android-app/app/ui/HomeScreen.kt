@@ -1,2 +1,0 @@
-
-// DevX Home Screen UI
