@@ -21,9 +21,7 @@ android {
         kotlinCompilerExtensionVersion '1.5.4'
     }
 
-    kotlinOptions {
-        jvmTarget = '17'
-    }
+    kotlinOptions { jvmTarget = '17' }
 }
 
 dependencies {
@@ -32,6 +30,8 @@ dependencies {
 
     implementation "androidx.compose.ui:ui:1.5.4"
     implementation "androidx.compose.ui:ui-tooling-preview:1.5.4"
+    implementation "androidx.compose.material:material:1.5.4"
 
     debugImplementation "androidx.compose.ui:ui-tooling:1.5.4"
+    implementation "com.google.android.material:material:1.11.0"
 }
