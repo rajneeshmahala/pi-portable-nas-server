@@ -1,0 +1,70 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  GRADLE_USER_HOME: $(Pipeline.Workspace)/.gradle
+
+steps:
+# -------------------------------------------------
+# Checkout source
+# -------------------------------------------------
+- checkout: self
+  clean: true
+
+# -------------------------------------------------
+# Install JDK 17 (required for modern Android)
+# -------------------------------------------------
+- task: JavaToolInstaller@0
+  displayName: 'Install JDK 17'
+  inputs:
+    versionSpec: '17'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'
+
+# -------------------------------------------------
+# Make gradlew executable
+# -------------------------------------------------
+- script: |
+    cd android-app
+    chmod +x gradlew
+  displayName: 'Grant execute permission to gradlew'
+
+# -------------------------------------------------
+# Accept Android SDK licenses
+# -------------------------------------------------
+- script: |
+    yes | sdkmanager --licenses
+  displayName: 'Accept Android SDK licenses'
+
+# -------------------------------------------------
+# Build Debug APK
+# -------------------------------------------------
+- script: |
+    cd android-app
+    ./gradlew clean assembleDebug
+  displayName: 'Build Debug APK'
+
+# -------------------------------------------------
+# Copy APK to artifact staging directory
+# -------------------------------------------------
+- task: CopyFiles@2
+  displayName: 'Copy APK to staging'
+  inputs:
+    SourceFolder: 'android-app/app/build/outputs/apk/debug'
+    Contents: '*.apk'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+# -------------------------------------------------
+# Publish APK as Pipeline Artifact
+# -------------------------------------------------
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish APK Artifact'
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    artifact: 'DevX-APK'
+    publishLocation: 'pipeline'
