@@ -7,16 +7,28 @@ pool:
 variables:
   ANDROID_SDK_ROOT: $(Agent.TempDirectory)/android-sdk
   ANDROID_HOME: $(Agent.TempDirectory)/android-sdk
+  GRADLE_VERSION: 8.5
 
 steps:
 # -------------------------------------------------
-# Java 17 (required)
+# Java 17
 # -------------------------------------------------
 - task: JavaToolInstaller@0
   inputs:
     versionSpec: '17'
     jdkArchitectureOption: 'x64'
     jdkSourceOption: 'PreInstalled'
+
+# -------------------------------------------------
+# Install Gradle 8.5 (IMPORTANT FIX)
+# -------------------------------------------------
+- script: |
+    wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
+    unzip gradle-${GRADLE_VERSION}-bin.zip
+    sudo mv gradle-${GRADLE_VERSION} /opt/gradle
+    sudo ln -s /opt/gradle/bin/gradle /usr/bin/gradle
+    gradle --version
+  displayName: Install Gradle 8.5
 
 # -------------------------------------------------
 # Install Android SDK
@@ -37,11 +49,11 @@ steps:
   displayName: Install Android SDK
 
 # -------------------------------------------------
-# Build APK (SYSTEM GRADLE – FIXED)
+# Build APK (STABLE)
 # -------------------------------------------------
 - script: |
     gradle -p android-app :app:clean :app:assembleDebug
-  displayName: Build Debug APK (System Gradle)
+  displayName: Build Debug APK
 
 # -------------------------------------------------
 # Publish APK
