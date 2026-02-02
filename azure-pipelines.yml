@@ -49,13 +49,19 @@ steps:
   displayName: Install Android SDK
 
 # -------------------------------------------------
-# Build APK (CRITICAL FIX HERE)
+# 🔴 HARD DISABLE KOTLIN STATISTICS (KEY FIX)
 # -------------------------------------------------
 - script: |
-    export KOTLIN_BUILD_REPORT_ENABLE=false
-    export KOTLIN_BUILD_STATISTICS_ENABLE=false
-    export GRADLE_OPTS="-Dkotlin.build.report.enable=false -Dkotlin.build.statistic.enable=false"
+    echo "kotlin.build.report.enable=false" >> android-app/gradle.properties
+    echo "kotlin.build.statistic.enable=false" >> android-app/gradle.properties
+    echo "kotlin.daemon.enabled=false" >> android-app/gradle.properties
+    echo "org.gradle.daemon=false" >> android-app/gradle.properties
+  displayName: Disable Kotlin & Gradle Daemons
 
+# -------------------------------------------------
+# Build APK (STABLE)
+# -------------------------------------------------
+- script: |
     gradle -p android-app :app:clean :app:assembleDebug --no-daemon
   displayName: Build Debug APK
 
