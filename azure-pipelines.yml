@@ -4,32 +4,50 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- checkout: self
-  clean: true
+variables:
+  ANDROID_SDK_ROOT: $(Agent.TempDirectory)/android-sdk
+  ANDROID_HOME: $(Agent.TempDirectory)/android-sdk
 
-# Install Java 17
+steps:
+# -------------------------------------------------
+# Java 17 (required)
+# -------------------------------------------------
 - task: JavaToolInstaller@0
   inputs:
     versionSpec: '17'
     jdkArchitectureOption: 'x64'
     jdkSourceOption: 'PreInstalled'
 
-# Install Gradle 8.5 (Android supported)
+# -------------------------------------------------
+# Install Android SDK
+# -------------------------------------------------
 - script: |
-    wget https://services.gradle.org/distributions/gradle-8.5-bin.zip
-    unzip -q gradle-8.5-bin.zip
-    echo "##vso[task.setvariable variable=PATH]$PWD/gradle-8.5/bin:$PATH"
-    gradle -v
-  displayName: 'Install Gradle 8.5'
+    mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
+    cd $ANDROID_SDK_ROOT/cmdline-tools
 
-# Build APK
+    wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+    unzip commandlinetools-linux-*.zip
+    mv cmdline-tools latest
+
+    yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager \
+      --sdk_root=$ANDROID_SDK_ROOT \
+      "platform-tools" \
+      "platforms;android-34" \
+      "build-tools;34.0.0"
+  displayName: Install Android SDK
+
+# -------------------------------------------------
+# Build APK (SYSTEM GRADLE – FIXED)
+# -------------------------------------------------
 - script: |
-    gradle -p android-app clean assembleDebug
-  displayName: 'Build Debug APK'
+    gradle -p android-app :app:clean :app:assembleDebug
+  displayName: Build Debug APK (System Gradle)
 
+# -------------------------------------------------
 # Publish APK
+# -------------------------------------------------
 - task: PublishPipelineArtifact@1
   inputs:
     targetPath: android-app/app/build/outputs/apk/debug
     artifact: DevX-APK
+    publishLocation: pipeline
