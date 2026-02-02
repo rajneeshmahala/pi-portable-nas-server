@@ -20,13 +20,13 @@ steps:
     jdkSourceOption: 'PreInstalled'
 
 # -------------------------------------------------
-# Install Gradle 8.5 (IMPORTANT FIX)
+# Install Gradle 8.5
 # -------------------------------------------------
 - script: |
     wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
     unzip gradle-${GRADLE_VERSION}-bin.zip
     sudo mv gradle-${GRADLE_VERSION} /opt/gradle
-    sudo ln -s /opt/gradle/bin/gradle /usr/bin/gradle
+    sudo ln -sf /opt/gradle/bin/gradle /usr/bin/gradle
     gradle --version
   displayName: Install Gradle 8.5
 
@@ -49,10 +49,14 @@ steps:
   displayName: Install Android SDK
 
 # -------------------------------------------------
-# Build APK (STABLE)
+# Build APK (CRITICAL FIX HERE)
 # -------------------------------------------------
 - script: |
-    gradle -p android-app :app:clean :app:assembleDebug
+    export KOTLIN_BUILD_REPORT_ENABLE=false
+    export KOTLIN_BUILD_STATISTICS_ENABLE=false
+    export GRADLE_OPTS="-Dkotlin.build.report.enable=false -Dkotlin.build.statistic.enable=false"
+
+    gradle -p android-app :app:clean :app:assembleDebug --no-daemon
   displayName: Build Debug APK
 
 # -------------------------------------------------
